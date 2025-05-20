@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Professional To-Do Web App</title>
+  <style>
+    /* Base styles (dark mode default) */
+    :root {
+  --bg-color-dark: #1e1e2f;
+  --container-bg-dark: #2e2e42;
+  --text-color-dark: #fff;
+  --task-bg-dark: #3e3e55;
+
+  --bg-color-light: #f9f9f9;
+  --container-bg-light: #fff;
+  --text-color-light: #222;
+  --task-bg-light: #eaeaea;
+}
+
+
+    body {
+     background: var(--bg-color-dark);
+  color: var(--text-color-dark);
+      font-family: Arial, sans-serif;
+      background: #1e1e2f;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .container {
+      background: var(--container-bg-dark);
+      width: 100%;
+      max-width: 800px;
+      padding: 20px;
+      border-radius: 10px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    
+
+    input, button, select{
+      padding: 10px;
+      margin: 5px;
+      border: none;
+      border-radius: 5px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    textarea{
+      border-radius: 5px;
+      border: none;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    #task-list li {
+      margin: 10px 0;
+      background: var(--task-bg-dark);
+      padding: 10px;
+      border-radius: 5px;
+      list-style-type: none;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+
+
+    .completed {
+      text-decoration: line-through;
+      color: lightgray;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .category-color-bar {
+      width: 5px;
+      height: 100%;
+      margin-right: 10px;
+      border-radius: 3px;
+    }
+
+    .task-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.task-content {
+  flex: 1;
+}
+.task-title {
+  font-family: 'Roboto Slab', serif; 
+  font-size: 1.3em;
+  font-weight: bold;
+}
+
+
+.task-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: flex-end;
+}
+
+.task-buttons button {
+  font-size: 12px;      /* smaller text */
+  padding: 4px 6px;     /* less padding */
+  width: 80px; 
+  width: 100px; /* adjust as needed */
+}
+
+#task-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  flex-direction: row;
+}
+
+#task-form input,
+#task-form select,
+#task-form textarea {
+  flex: none;
+  margin: 0;
+  width: 120px;
+  font-size: 13px;
+}
+#task-form button{
+  #task-form button {
+  font-size: 13px;
+  padding: 6px 10px;
+  width: auto;
+  max-width: 100px;
+}
+}
+
+
+    .edit-options button {
+      margin: 3px;
+      padding: 5px 10px;
+      background-color:white;
+      border: none;
+      color: black;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .General { background-color: #9e9e9e; }
+    .Work { background-color: #2196f3; }
+    .Personal { background-color: #4caf50; }
+    .Study { background-color: #ff9800; }
+
+    /* Light mode styles */
+    body.light {
+      background: #f9f9f9;
+      color: #222;
+    }
+
+    body.light .container {
+      background: #fff;
+      color: #222;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    body.light input, 
+    body.light select {
+      background-color: #eee;
+      color: #222;
+    }
+
+    body.light button {
+      background-color: #ddd;
+      color: #222;
+      cursor: pointer;
+    }
+
+    body.light button:hover {
+      background-color: #ccc;
+    }
+
+    body.light #task-list li {
+      background: #eaeaea;
+      color: #222;
+    }
+
+    body.light .completed {
+      color: #888;
+    }
+
+    body.light .edit-options button {
+      background-color: #ccc;
+      color: #222;
+    }
+
+    body.light .edit-options button:hover {
+      background-color: #bbb;
+    }
+
+    .btn-complete {
+  background-color: #4caf50;
+  color: white;
+}
+
+.btn-edit {
+  background-color: #2196f3;
+  color: white;
+}
+
+.btn-delete {
+  background-color: #f44336;
+  color: white;
+}
+
+.btn-complete:hover {
+  background-color: #45a049;
+}
+
+.btn-edit:hover {
+  background-color: #1976d2;
+}
+
+.btn-delete:hover {
+  background-color: #d32f2f;
+}
+
+.inline-editor {
+  margin-top: 6px;
+  display: block;
+  padding: 5px;
+  font-size: 14px;
+  border-radius: 4px;
+  width: 100%;
+  max-width: 200px;
+}
+.edit-popup-form{
+  color: black;
+
+}
+
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>To-Do List</h1>
+    <!-- Toggle button -->
+
+    <div class="controls">
+      <input type="text" id="search-bar" placeholder="Search tasks..." />
+      <select id="filter-priority">
+        <option value="">All Priorities</option>
+        <option value="high">🔴 High</option>
+        <option value="medium">🟡 Medium</option>
+        <option value="low">🟢 Low</option>
+      </select>
+      <select id="filter-status">
+        <option value="">All Statuses</option>
+        <option value="completed">Completed</option>
+        <option value="pending">Pending</option>
+      </select>
+      <select id="sort-by">
+        <option value="">Sort By</option>
+        <option value="name">Alphabetical</option>
+        <option value="date">Due Date</option>
+        <option value="priority">Priority</option>
+      </select>
+    </div>
+
+    <ul id="task-list"></ul>
+
+    <div id="edit-popup" style="display:none; position:absolute; background:#fff; border:1px solid #ccc; padding:15px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.2); z-index:1000; width: 280px; font-family: Arial, sans-serif;">
+  <form id="edit-popup-form" style="margin: 0;">
+    
+    <div style="margin-bottom: 12px;">
+      <label for="edit-task-text" style="display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 4px;">Task</label>
+      <input type="text" id="edit-task-text" required style="width: 100%; padding: 6px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
+    </div>
+
+    <div style="margin-bottom: 12px;">
+      <label for="edit-task-priority" style="display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 4px;">Priority</label>
+      <select id="edit-task-priority" style="width: 100%; padding: 6px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+        <option value="low">🟢 Low</option>
+        <option value="medium">🟡 Medium</option>
+        <option value="high">🔴 High</option>
+      </select>
+    </div>
+
+    <div style="margin-bottom: 12px;">
+      <label for="edit-task-datetime" style="display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 4px;">Due Date</label>
+      <input type="datetime-local" id="edit-task-datetime" style="width: 100%; padding: 6px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
+    </div>
+
+    <div style="margin-bottom: 12px;">
+      <label for="edit-task-category" style="display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 4px;">Category</label>
+      <select id="edit-task-category" style="width: 100%; padding: 6px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+        <option value="General">General</option>
+        <option value="Work">Work</option>
+        <option value="Personal">Personal</option>
+        <option value="Study">Study</option>
+      </select>
+    </div>
+    <label for="edit-task-category" style="display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 4px;">Description</label>
+  <textarea id="edit-task-desc" rows="3" style="width: 100%; margin-bottom:8px;" placeholder="Optional description..."></textarea>
+
+
+    <div style="text-align:right;">
+      <button type="submit" style="padding: 6px 12px; margin-right: 8px; background: #007bff; color: white; border: none; border-radius: 4px; font-weight: 600;">Save</button>
+      <button type="button" id="edit-cancel-btn" style="padding: 6px 12px; background: #ccc; border: none; border-radius: 4px; font-weight: 600;">Cancel</button>
+    </div>
+
+  </form>
+</div>
+
+
+    <form id="task-form">
+      <input type="text" id="task-input" placeholder="Enter task" required />
+      <input type="datetime-local" id="task-datetime" />
+      <select id="task-priority">
+        <option value="low">🟢 Low</option>
+        <option value="medium">🟡 Medium</option>
+        <option value="high">🔴 High</option>
+      </select>
+      <select id="task-category">
+        <option value="General">General</option>
+        <option value="Work">Work</option>
+        <option value="Personal">Personal</option>
+        <option value="Study">Study</option>
+      </select>
+      <textarea id="task-desc" placeholder="Description (optional)"></textarea>
+      <button type="submit">Add Task</button>
+    </form>
+
+  </div>
+
+  <script>
+    const taskForm = document.getElementById('task-form');
+    const taskInput = document.getElementById('task-input');
+    const taskDateTime = document.getElementById('task-datetime');
+    const taskPriority = document.getElementById('task-priority');
+    const taskCategory = document.getElementById('task-category');
+    const taskList = document.getElementById('task-list');
+    const searchBar = document.getElementById('search-bar');
+    const filterPriority = document.getElementById('filter-priority');
+    const filterStatus = document.getElementById('filter-status');
+    const sortBy = document.getElementById('sort-by');
+    const toggleThemeBtn = document.getElementById('toggle-theme');
+
+    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+    function saveTasks() {
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+
+    const editPopup = document.getElementById('edit-popup');
+const editForm = document.getElementById('edit-popup-form');
+const editCancelBtn = document.getElementById('edit-cancel-btn');
+
+let currentEditIndex = null;
+
+function openEditPopup(index, event) {
+  currentEditIndex = index;
+  const task = tasks[index];
+
+  // Fill form inputs with current task data
+  document.getElementById('edit-task-text').value = task.text;
+  document.getElementById('edit-task-priority').value = task.priority;
+  document.getElementById('edit-task-datetime').value = task.datetime || '';
+  document.getElementById('edit-task-category').value = task.category;
+  document.getElementById('edit-task-desc').value = task.description || '';
+
+
+  // Position the popup near the clicked Edit button
+  const rect = event.target.getBoundingClientRect();
+  editPopup.style.top = `${rect.bottom + window.scrollY + 5}px`;
+  editPopup.style.left = `${rect.left + window.scrollX}px`;
+  editPopup.style.display = 'block';
+}
+
+function closeEditPopup() {
+  editPopup.style.display = 'none';
+  currentEditIndex = null;
+}
+
+
+// Cancel button closes popup without saving
+editCancelBtn.addEventListener('click', closeEditPopup);
+
+// Handle form submit
+editForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  if (currentEditIndex === null) return;
+
+  // Update task with new values
+  tasks[currentEditIndex].text = document.getElementById('edit-task-text').value.trim();
+  tasks[currentEditIndex].priority = document.getElementById('edit-task-priority').value;
+  tasks[currentEditIndex].datetime = document.getElementById('edit-task-datetime').value;
+  tasks[currentEditIndex].category = document.getElementById('edit-task-category').value;
+  tasks[currentEditIndex].description = document.getElementById('edit-task-desc').value.trim();
+
+
+  saveTasks();
+  renderTasks();
+  closeEditPopup();
+});
+
+
+
+    function renderTasks() {
+      taskList.innerHTML = '';
+      const priorityIcons = {
+        high: '🔴 High',
+        medium: '🟡 Medium',
+        low: '🟢 Low'
+      };
+
+      let filteredTasks = tasks.filter(task => {
+        return (
+          (!filterPriority.value || task.priority === filterPriority.value) &&
+          (!filterStatus.value || (filterStatus.value === 'completed' && task.completed) || (filterStatus.value === 'pending' && !task.completed)) &&
+          (!searchBar.value || task.text.toLowerCase().includes(searchBar.value.toLowerCase()))
+        );
+      });
+
+      if (sortBy.value === 'name') {
+        filteredTasks.sort((a, b) => a.text.localeCompare(b.text));
+      } else if (sortBy.value === 'date') {
+        filteredTasks.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
+      } else if (sortBy.value === 'priority') {
+        const order = { high: 1, medium: 2, low: 3 };
+        filteredTasks.sort((a, b) => order[a.priority] - order[b.priority]);
+      }
+
+      filteredTasks.forEach((task, index) => {
+        const li = document.createElement('li');
+        li.className = task.completed ? 'completed' : '';
+        li.innerHTML = `
+  <div class="task-item">
+    <div class="category-color-bar ${task.category}"></div>
+    <div class="task-content">
+      <strong class="task-title">${task.text}</strong><br><br>
+      <em>${task.description ? `<p style="margin: 4px 0 6px 0;">${task.description}</p>` : ''}</em>
+      <em>Due Date: ${task.datetime ? `<small>${formatDateTime(task.datetime)}</small>`: ''}</em>
+      <br><em>Priority: ${priorityIcons[task.priority]}</em>
+      <br><em>Category: ${task.category}</em>
+    </div>
+    <div class="task-buttons">
+      <button class="btn-complete" onclick="toggleComplete(${index})">✅ Complete</button>
+      <button class="btn-edit" onclick="openEditPopup(${index}, event)">✏ Edit</button>
+      <div id="edit-options-${index}" class="edit-options" style="display:none;">
+        <button onclick="editTask(${index}, 'text')">Edit Text</button>
+        <button onclick="editTask(${index}, 'priority')">Edit Priority</button>
+        <button onclick="editTask(${index}, 'datetime')">Edit Date</button>
+        <button onclick="editTask(${index}, 'category')">Edit Category</button>
+      </div>
+      <button class="btn-delete" onclick="deleteTask(${index})">🗑 Delete</button>
+    </div>
+  </div>
+`;
+
+        taskList.appendChild(li);
+      });
+    }
+
+
+    function formatDateTime(datetimeStr) {
+  const dateObj = new Date(datetimeStr);
+  const dd = String(dateObj.getDate()).padStart(2, '0');
+  const mm = String(dateObj.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+  const yyyy = dateObj.getFullYear();
+
+  const hours = String(dateObj.getHours()).padStart(2, '0');
+  const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+
+  return `${dd}-${mm}-${yyyy}                 ${hours}:${minutes}`;
+}
+
+
+    function toggleEditOptions(index) {
+      const editDiv = document.getElementById(`edit-options-${index}`);
+      editDiv.style.display = editDiv.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function addTask(e) {
+  e.preventDefault();
+  const newTask = {
+    text: taskInput.value,
+    datetime: taskDateTime.value,
+    priority: taskPriority.value,
+    category: taskCategory.value,
+    description: document.getElementById('task-desc').value.trim(), // ✅ Add this
+    completed: false
+  };
+  tasks.push(newTask);
+  saveTasks();
+  renderTasks();
+  taskForm.reset();
+}
+
+
+    function toggleComplete(index) {
+      tasks[index].completed = !tasks[index].completed;
+      saveTasks();
+      renderTasks();
+    }
+
+    function editTask(index, field) {
+  const container = document.getElementById(`edit-options-${index}`);
+  
+  // Remove any existing input before adding a new one
+  const existing = container.querySelector('.inline-editor');
+  if (existing) existing.remove();
+
+  let editor;
+
+  if (field === 'text') {
+    editor = document.createElement('input');
+    editor.type = 'text';
+    editor.value = tasks[index].text;
+    editor.className = 'inline-editor';
+    editor.addEventListener('blur', () => {
+      tasks[index].text = editor.value.trim() || tasks[index].text;
+      saveTasks();
+      renderTasks();
+    });
+  } else if (field === 'priority') {
+    editor = document.createElement('select');
+    editor.className = 'inline-editor';
+    editor.innerHTML = `
+      <option value="low" ${tasks[index].priority === 'low' ? 'selected' : ''}>🟢 Low</option>
+      <option value="medium" ${tasks[index].priority === 'medium' ? 'selected' : ''}>🟡 Medium</option>
+      <option value="high" ${tasks[index].priority === 'high' ? 'selected' : ''}>🔴 High</option>
+    `;
+    editor.addEventListener('change', () => {
+      tasks[index].priority = editor.value;
+      saveTasks();
+      renderTasks();
+    });
+  } else if (field === 'datetime') {
+    editor = document.createElement('input');
+    editor.type = 'datetime-local';
+    editor.value = tasks[index].datetime;
+    editor.className = 'inline-editor';
+    editor.addEventListener('change', () => {
+      tasks[index].datetime = editor.value;
+      saveTasks();
+      renderTasks();
+    });
+  } else if (field === 'category') {
+    editor = document.createElement('select');
+    editor.className = 'inline-editor';
+    editor.innerHTML = `
+      <option value="General" ${tasks[index].category === 'General' ? 'selected' : ''}>General</option>
+      <option value="Work" ${tasks[index].category === 'Work' ? 'selected' : ''}>Work</option>
+      <option value="Personal" ${tasks[index].category === 'Personal' ? 'selected' : ''}>Personal</option>
+      <option value="Study" ${tasks[index].category === 'Study' ? 'selected' : ''}>Study</option>
+    `;
+    editor.addEventListener('change', () => {
+      tasks[index].category = editor.value;
+      saveTasks();
+      renderTasks();
+    });
+  }
+
+  container.appendChild(editor);
+  editor.focus();
+}
+
+
+    function deleteTask(index) {
+      if (confirm("Delete this task?")) {
+        tasks.splice(index, 1);
+        saveTasks();
+        renderTasks();
+      }
+    }
+
+    taskForm.addEventListener('submit', addTask);
+    searchBar.addEventListener('input', renderTasks);
+    filterPriority.addEventListener('change', renderTasks);
+    filterStatus.addEventListener('change', renderTasks);
+    sortBy.addEventListener('change', renderTasks);
+
+    renderTasks();
+  </script>
+</body>
+</html>
